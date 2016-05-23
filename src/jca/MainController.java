@@ -38,11 +38,20 @@ public class MainController {
     ServerSocket serverSocket;
     Socket socket;
 
+
+    private void setControlDisable(boolean isDisble) {
+        portTextField.setDisable(isDisble);
+        destPortTextField.setDisable(!isDisble);
+        destIPTextField.setDisable(!isDisble);
+    }
     public void handleServerCheckBox(ActionEvent actionEvent) {
-        if (serverCheckBox.isSelected())
+        if (serverCheckBox.isSelected()) {
+            setControlDisable(false);
             listenButton.setText("listen");
-        else
+        } else {
+            setControlDisable(true);
             listenButton.setText("connect");
+        }
     }
 
     @FXML
@@ -54,6 +63,7 @@ public class MainController {
                 System.out.println("listen");
 
                 int port = Integer.parseInt(portTextField.getText());
+
                 System.out.println(port);
                 serverSocket = new ServerSocket(port);
                 Task<Void> task = new Task<Void>() {
@@ -64,7 +74,6 @@ public class MainController {
                         while ((clientSocket = serverSocket.accept()) != null) {
                             BufferedReader buff = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                             chatTextArea.setText(buff.readLine());
-//                            System.out.println(buff.read());
                             buff.close();
                         }
 
@@ -73,9 +82,11 @@ public class MainController {
                 };
                 new Thread(task).start();
                 listenButton.setText("unlisten");
+                portTextField.setDisable(true);
             } else {
                 serverSocket.close();
                 listenButton.setText("listen");
+                portTextField.setDisable(false);
             }
         } else {
             if (currentText.equals("connect")) {
