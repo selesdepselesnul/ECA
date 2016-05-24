@@ -1,6 +1,5 @@
 package jca;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -41,9 +40,7 @@ public class MainController implements Initializable {
     private TextField usernameTextField;
 
     ServerSocket serverSocket;
-    Socket socket;
-    Socket clientSocket;
-    private DataOutputStream dOut;
+
     private NetworkManager networkManager;
 
 
@@ -60,7 +57,7 @@ public class MainController implements Initializable {
         destPortTextField.setDisable(!isDisble);
         destIPTextField.setDisable(!isDisble);
     }
-    public void handleServerCheckBox(ActionEvent actionEvent) {
+    public void handleServerCheckBox() {
         if (serverCheckBox.isSelected()) {
             disableServerInput(false);
             listenButton.setText("listen");
@@ -71,21 +68,19 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void handleClickListenButton(ActionEvent e) throws IOException {
+    public void handleClickListenButton() throws IOException {
 
         String currentText = listenButton.getText();
         if(serverCheckBox.isSelected()) {
             if (currentText.equals("listen")) {
                 System.out.println("listen");
-
                 int port = Integer.parseInt(portTextField.getText());
-
                 System.out.println(port);
-
+                serverSocket = new ServerSocket(port);
                 this.networkManager.connectAndReceive(
                         () -> {
                             try {
-                                return new ServerSocket(port).accept();
+                                return serverSocket.accept();
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }
@@ -95,7 +90,7 @@ public class MainController implements Initializable {
                 listenButton.setText("unlisten");
                 portTextField.setDisable(true);
             } else {
-                this.networkManager.close();
+                networkManager.close();
                 serverSocket.close();
                 listenButton.setText("listen");
                 portTextField.setDisable(false);
@@ -104,8 +99,14 @@ public class MainController implements Initializable {
             if (currentText.equals("connect")) {
                 int port = Integer.parseInt(destPortTextField.getText());
                 String ip = destIPTextField.getText();
-                socket = new Socket(ip, port);
-                this.networkManager.connectAndReceive(() -> socket);
+                networkManager.connectAndReceive(() -> {
+                    try {
+                        return new Socket(ip, port);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                });
                 listenButton.setText("disconnect");
             } else {
                 this.networkManager.close();
