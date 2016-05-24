@@ -35,6 +35,9 @@ public class MainController {
     @FXML
     private TextArea messageTextArea;
 
+    @FXML
+    private TextField usernameTextField;
+
     ServerSocket serverSocket;
     Socket socket;
     Socket clientSocket;
@@ -77,7 +80,7 @@ public class MainController {
 
                         String data;
                         while ((data = dat.readUTF()) != null)
-                                chatTextArea.setText(data);
+                                chatTextArea.appendText(data);
 
                         return null;
 
@@ -104,7 +107,7 @@ public class MainController {
                     protected Void call() throws Exception {
                         String data;
                         while ((data = dat.readUTF()) != null)
-                            chatTextArea.setText(data);
+                            chatTextArea.appendText(data);
 
                         return null;
                     }
@@ -122,11 +125,11 @@ public class MainController {
     public void handleSendButton() throws IOException {
         if(serverCheckBox.isSelected()) {
             dOut = new DataOutputStream(this.clientSocket.getOutputStream());
-            dOut.writeUTF(messageTextArea.getText());
+            dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
         } else {
 
             System.out.println("send");
-            dOut.writeUTF(messageTextArea.getText());
+            dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
             dOut.flush();
         }
     }
