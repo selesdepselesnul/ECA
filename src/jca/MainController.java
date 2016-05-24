@@ -69,13 +69,12 @@ public class MainController {
 
                 int port = Integer.parseInt(portTextField.getText());
 
-                System.out.println(port);
-                serverSocket = new ServerSocket(port);
-
                 Task<Void> task = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
 
+                        System.out.println(port);
+                        serverSocket = new ServerSocket(port);
                         clientSocket = serverSocket.accept();
                         dOut = new DataOutputStream(clientSocket.getOutputStream());
                         DataInputStream dat = new DataInputStream(clientSocket.getInputStream());
@@ -100,13 +99,14 @@ public class MainController {
             if (currentText.equals("connect")) {
                 int port = Integer.parseInt(destPortTextField.getText());
                 String ip = destIPTextField.getText();
-                socket = new Socket(ip, port);
-                socket.setTcpNoDelay(true);
-                dOut = new DataOutputStream(socket.getOutputStream());
-                DataInputStream dat = new DataInputStream(socket.getInputStream());
+
                 Task<Void> task = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
+                        socket = new Socket(ip, port);
+                        socket.setTcpNoDelay(true);
+                        dOut = new DataOutputStream(socket.getOutputStream());
+                        DataInputStream dat = new DataInputStream(socket.getInputStream());
                         String data;
                         while ((data = dat.readUTF()) != null)
                             chatTextArea.appendText(data);
