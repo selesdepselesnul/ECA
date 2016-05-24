@@ -71,11 +71,13 @@ public class MainController {
 
                 System.out.println(port);
                 serverSocket = new ServerSocket(port);
+
                 Task<Void> task = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
 
                         clientSocket = serverSocket.accept();
+                        dOut = new DataOutputStream(clientSocket.getOutputStream());
                         DataInputStream dat = new DataInputStream(clientSocket.getInputStream());
 
                         String data;
@@ -124,7 +126,7 @@ public class MainController {
     @FXML
     public void handleSendButton() throws IOException {
         if(serverCheckBox.isSelected()) {
-            dOut = new DataOutputStream(this.clientSocket.getOutputStream());
+
             dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
         } else {
             dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
