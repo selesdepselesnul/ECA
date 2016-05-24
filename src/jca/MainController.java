@@ -87,7 +87,7 @@ public class MainController {
                 listenButton.setText("unlisten");
                 portTextField.setDisable(true);
             } else {
-//                serverSocket.close();
+                serverSocket.close();
                 listenButton.setText("listen");
                 portTextField.setDisable(false);
             }
@@ -98,9 +98,21 @@ public class MainController {
                 socket = new Socket(ip, port);
                 socket.setTcpNoDelay(true);
                 dOut = new DataOutputStream(socket.getOutputStream());
+                DataInputStream dat = new DataInputStream(socket.getInputStream());
+                Task<Void> task = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        String data;
+                        while ((data = dat.readUTF()) != null)
+                            chatTextArea.setText(data);
+
+                        return null;
+                    }
+                };
+                new Thread(task).start();
                 listenButton.setText("disconnect");
             } else {
-//                socket.close();
+                socket.close();
                 listenButton.setText("connect");
             }
         }
@@ -109,12 +121,11 @@ public class MainController {
     @FXML
     public void handleSendButton() throws IOException {
         if(serverCheckBox.isSelected()) {
-            DataOutputStream dOut = new DataOutputStream(this.clientSocket.getOutputStream());
+            dOut = new DataOutputStream(this.clientSocket.getOutputStream());
             dOut.writeUTF(messageTextArea.getText());
         } else {
 
             System.out.println("send");
-//            DataOutputStream dOut =
             dOut.writeUTF(messageTextArea.getText());
             dOut.flush();
         }
