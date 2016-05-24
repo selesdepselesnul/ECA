@@ -1,8 +1,8 @@
 package jca;
 
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
@@ -11,8 +11,10 @@ import javafx.scene.control.TextField;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class MainController {
+public class MainController implements Initializable {
 
     @FXML
     private TextArea chatTextArea;
@@ -42,7 +44,16 @@ public class MainController {
     Socket socket;
     Socket clientSocket;
     private DataOutputStream dOut;
+    private NetworkManager networkManager;
 
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.networkManager = new NetworkManager(
+                x -> chatTextArea.appendText(x),
+                () -> this.usernameTextField.getText(),
+                () -> this.messageTextArea.getText());
+    }
 
     private void disableServerInput(boolean isDisble) {
         portTextField.setDisable(isDisble);
@@ -69,28 +80,22 @@ public class MainController {
 
                 int port = Integer.parseInt(portTextField.getText());
 
-                Task<Void> task = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
+                System.out.println(port);
 
-                        System.out.println(port);
-                        serverSocket = new ServerSocket(port);
-                        clientSocket = serverSocket.accept();
-                        dOut = new DataOutputStream(clientSocket.getOutputStream());
-                        DataInputStream dat = new DataInputStream(clientSocket.getInputStream());
-
-                        String data;
-                        while ((data = dat.readUTF()) != null)
-                                chatTextArea.appendText(data);
-
-                        return null;
-
-                    }
-                };
-                new Thread(task).start();
+                this.networkManager.connectAndReceive(
+                        () -> {
+                            try {
+                                return new ServerSocket(port).accept();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                            return null;
+                        }
+                );
                 listenButton.setText("unlisten");
                 portTextField.setDisable(true);
             } else {
+                this.networkManager.close();
                 serverSocket.close();
                 listenButton.setText("listen");
                 portTextField.setDisable(false);
@@ -99,25 +104,11 @@ public class MainController {
             if (currentText.equals("connect")) {
                 int port = Integer.parseInt(destPortTextField.getText());
                 String ip = destIPTextField.getText();
-
-                Task<Void> task = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        socket = new Socket(ip, port);
-                        socket.setTcpNoDelay(true);
-                        dOut = new DataOutputStream(socket.getOutputStream());
-                        DataInputStream dat = new DataInputStream(socket.getInputStream());
-                        String data;
-                        while ((data = dat.readUTF()) != null)
-                            chatTextArea.appendText(data);
-
-                        return null;
-                    }
-                };
-                new Thread(task).start();
+                socket = new Socket(ip, port);
+                this.networkManager.connectAndReceive(() -> socket);
                 listenButton.setText("disconnect");
             } else {
-                socket.close();
+                this.networkManager.close();
                 listenButton.setText("connect");
             }
         }
@@ -125,13 +116,7 @@ public class MainController {
 
     @FXML
     public void handleSendButton() throws IOException {
-        if(serverCheckBox.isSelected()) {
-
-            dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
-        } else {
-            dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
-            dOut.flush();
-        }
+        this.networkManager.send();
     }
 
 }
