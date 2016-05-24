@@ -39,17 +39,17 @@ public class MainController {
     Socket socket;
 
 
-    private void setControlDisable(boolean isDisble) {
+    private void disableServerInput(boolean isDisble) {
         portTextField.setDisable(isDisble);
         destPortTextField.setDisable(!isDisble);
         destIPTextField.setDisable(!isDisble);
     }
     public void handleServerCheckBox(ActionEvent actionEvent) {
         if (serverCheckBox.isSelected()) {
-            setControlDisable(false);
+            disableServerInput(false);
             listenButton.setText("listen");
         } else {
-            setControlDisable(true);
+            disableServerInput(true);
             listenButton.setText("connect");
         }
     }
