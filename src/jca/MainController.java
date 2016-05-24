@@ -82,9 +82,8 @@ public class MainController implements Initializable {
                             try {
                                 return serverSocket.accept();
                             } catch (IOException e1) {
-                                e1.printStackTrace();
+                                return null;
                             }
-                            return null;
                         }
                 );
                 listenButton.setText("unlisten");
@@ -103,9 +102,8 @@ public class MainController implements Initializable {
                     try {
                         return new Socket(ip, port);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        return null;
                     }
-                    return null;
                 });
                 listenButton.setText("disconnect");
             } else {
