@@ -37,6 +37,8 @@ public class MainController {
 
     ServerSocket serverSocket;
     Socket socket;
+    Socket clientSocket;
+    private DataOutputStream dOut;
 
 
     private void disableServerInput(boolean isDisble) {
@@ -70,29 +72,35 @@ public class MainController {
                     @Override
                     protected Void call() throws Exception {
 
-                        Socket clientSocket;
-                        while ((clientSocket = serverSocket.accept()) != null) {
-                            DataInputStream dat = new DataInputStream(clientSocket.getInputStream());
-                            chatTextArea.setText(dat.readUTF());
-                        }
+                        clientSocket = serverSocket.accept();
+                        DataInputStream dat = new DataInputStream(clientSocket.getInputStream());
+
+                        String data;
+                        while ((data = dat.readUTF()) != null)
+                                chatTextArea.setText(data);
 
                         return null;
+
                     }
                 };
                 new Thread(task).start();
                 listenButton.setText("unlisten");
                 portTextField.setDisable(true);
             } else {
-                serverSocket.close();
+//                serverSocket.close();
                 listenButton.setText("listen");
                 portTextField.setDisable(false);
             }
         } else {
             if (currentText.equals("connect")) {
-
+                int port = Integer.parseInt(destPortTextField.getText());
+                String ip = destIPTextField.getText();
+                socket = new Socket(ip, port);
+                socket.setTcpNoDelay(true);
+                dOut = new DataOutputStream(socket.getOutputStream());
                 listenButton.setText("disconnect");
             } else {
-                socket.close();
+//                socket.close();
                 listenButton.setText("connect");
             }
         }
@@ -101,19 +109,14 @@ public class MainController {
     @FXML
     public void handleSendButton() throws IOException {
         if(serverCheckBox.isSelected()) {
-
-        } else {
-            int port = Integer.parseInt(destPortTextField.getText());
-            String ip = destIPTextField.getText();
-            socket = new Socket(ip, port);
-            socket.setTcpNoDelay(true);
-            System.out.println("send");
-            DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
+            DataOutputStream dOut = new DataOutputStream(this.clientSocket.getOutputStream());
             dOut.writeUTF(messageTextArea.getText());
-//            buff.write(messageTextArea.getText());
-//            buff.flush();
-//            buff.close();
-            socket.close();
+        } else {
+
+            System.out.println("send");
+//            DataOutputStream dOut =
+            dOut.writeUTF(messageTextArea.getText());
+            dOut.flush();
         }
     }
 
