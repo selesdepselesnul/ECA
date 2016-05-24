@@ -113,7 +113,11 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleSendButton() throws IOException {
+
+        this.chatTextArea.appendText(
+                "Me:\n"+this.messageTextArea.getText()+'\n');
         this.chatManager.send();
+        this.messageTextArea.clear();
     }
 
 }

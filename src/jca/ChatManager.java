@@ -18,11 +18,11 @@ public class ChatManager {
     private DataInputStream dIn;
     private Socket clientSocket;
 
-    ChatManager(Consumer<String> dataAcceptor,
+    ChatManager(Consumer<String> chatConsumer,
                 Supplier<String> headerSupplier,
                 Supplier<String> messageSupplier) {
 
-        this.acceptData = dataAcceptor;
+        this.acceptData = chatConsumer;
         this.headerSupplier = headerSupplier;
         this.messageSupplier = messageSupplier;
     }
@@ -50,7 +50,8 @@ public class ChatManager {
     }
 
     public void send() throws IOException {
-        dOut.writeUTF(this.headerSupplier.get()+'\n'+this.messageSupplier.get()+"\n\n\n");
+        dOut.writeUTF(
+                this.headerSupplier.get()+":\n"+this.messageSupplier.get()+"\n\n\n");
         dOut.flush();
     }
 
