@@ -127,8 +127,6 @@ public class MainController {
             dOut = new DataOutputStream(this.clientSocket.getOutputStream());
             dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
         } else {
-
-            System.out.println("send");
             dOut.writeUTF(this.usernameTextField.getText()+'\n'+messageTextArea.getText()+"\n\n\n");
             dOut.flush();
         }
