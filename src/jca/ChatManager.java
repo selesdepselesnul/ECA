@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class NetworkManager {
+public class ChatManager {
     private final Consumer<String> acceptData;
     private final Supplier<String> headerSupplier;
     private final Supplier<String> messageSupplier;
@@ -18,9 +18,9 @@ public class NetworkManager {
     private DataInputStream dIn;
     private Socket clientSocket;
 
-    NetworkManager(Consumer<String> dataAcceptor,
-                   Supplier<String> headerSupplier,
-                   Supplier<String> messageSupplier) {
+    ChatManager(Consumer<String> dataAcceptor,
+                Supplier<String> headerSupplier,
+                Supplier<String> messageSupplier) {
 
         this.acceptData = dataAcceptor;
         this.headerSupplier = headerSupplier;

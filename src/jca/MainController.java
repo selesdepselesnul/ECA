@@ -39,14 +39,14 @@ public class MainController implements Initializable {
     @FXML
     private TextField usernameTextField;
 
-    ServerSocket serverSocket;
+    private ServerSocket serverSocket;
 
-    private NetworkManager networkManager;
+    private ChatManager chatManager;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.networkManager = new NetworkManager(
+        this.chatManager = new ChatManager(
                 x -> chatTextArea.appendText(x),
                 () -> this.usernameTextField.getText(),
                 () -> this.messageTextArea.getText());
@@ -73,11 +73,9 @@ public class MainController implements Initializable {
         String currentText = listenButton.getText();
         if(serverCheckBox.isSelected()) {
             if (currentText.equals("listen")) {
-                System.out.println("listen");
                 int port = Integer.parseInt(portTextField.getText());
-                System.out.println(port);
                 serverSocket = new ServerSocket(port);
-                this.networkManager.connectAndReceive(
+                this.chatManager.connectAndReceive(
                         () -> {
                             try {
                                 return serverSocket.accept();
@@ -89,16 +87,16 @@ public class MainController implements Initializable {
                 listenButton.setText("unlisten");
                 portTextField.setDisable(true);
             } else {
-                networkManager.close();
+                chatManager.close();
                 serverSocket.close();
                 listenButton.setText("listen");
                 portTextField.setDisable(false);
             }
         } else {
             if (currentText.equals("connect")) {
-                int port = Integer.parseInt(destPortTextField.getText());
                 String ip = destIPTextField.getText();
-                networkManager.connectAndReceive(() -> {
+                int port = Integer.parseInt(destPortTextField.getText());
+                chatManager.connectAndReceive(() -> {
                     try {
                         return new Socket(ip, port);
                     } catch (IOException e) {
@@ -107,7 +105,7 @@ public class MainController implements Initializable {
                 });
                 listenButton.setText("disconnect");
             } else {
-                this.networkManager.close();
+                this.chatManager.close();
                 listenButton.setText("connect");
             }
         }
@@ -115,7 +113,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleSendButton() throws IOException {
-        this.networkManager.send();
+        this.chatManager.send();
     }
 
 }
