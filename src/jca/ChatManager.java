@@ -13,7 +13,6 @@ public class ChatManager {
     private final Consumer<String> acceptData;
     private final Supplier<String> headerSupplier;
     private final Supplier<String> messageSupplier;
-    private Socket socket;
     private DataOutputStream dOut;
     private DataInputStream dIn;
     private Socket clientSocket;
@@ -39,6 +38,7 @@ public class ChatManager {
                 dIn = new DataInputStream(clientSocket.getInputStream());
                 dOut = new DataOutputStream(clientSocket.getOutputStream());
                 String data;
+
                 while ((data = dIn.readUTF()) != null)
                     acceptData.accept(data);
 
@@ -58,6 +58,6 @@ public class ChatManager {
     public void close() throws IOException {
         dIn.close();
         dOut.close();
-        socket.close();
+        clientSocket.close();
     }
 }

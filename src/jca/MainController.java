@@ -48,8 +48,8 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.chatManager = new ChatManager(
                 x -> chatTextArea.appendText(x),
-                () -> this.usernameTextField.getText(),
-                () -> this.messageTextArea.getText());
+                () -> usernameTextField.getText(),
+                () -> messageTextArea.getText());
     }
 
     private void disableServerInput(boolean isDisble) {
@@ -69,7 +69,6 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleClickListenButton() throws IOException {
-
         String currentText = listenButton.getText();
         if(serverCheckBox.isSelected()) {
             if (currentText.equals("listen")) {
@@ -113,7 +112,6 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleSendButton() throws IOException {
-
         this.chatTextArea.appendText(
                 "Me:\n"+this.messageTextArea.getText()+'\n');
         this.chatManager.send();
