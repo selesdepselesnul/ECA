@@ -72,9 +72,8 @@ public class MainController {
 
                         Socket clientSocket;
                         while ((clientSocket = serverSocket.accept()) != null) {
-                            BufferedReader buff = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                            chatTextArea.setText(buff.readLine());
-                            buff.close();
+                            DataInputStream dat = new DataInputStream(clientSocket.getInputStream());
+                            chatTextArea.setText(dat.readUTF());
                         }
 
                         return null;
@@ -90,22 +89,6 @@ public class MainController {
             }
         } else {
             if (currentText.equals("connect")) {
-                int port = Integer.parseInt(destPortTextField.getText());
-                String ip = destIPTextField.getText();
-                System.out.println(port);
-                System.out.println(ip);
-                Task<Void> task = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try {
-                            socket = new Socket(ip, port);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        return null;
-                    }
-                };
-                new Thread(task).start();
 
                 listenButton.setText("disconnect");
             } else {
@@ -125,11 +108,11 @@ public class MainController {
             socket = new Socket(ip, port);
             socket.setTcpNoDelay(true);
             System.out.println("send");
-            BufferedWriter buff = new BufferedWriter(
-                    new OutputStreamWriter(socket.getOutputStream()));
-            buff.write(messageTextArea.getText());
-            buff.flush();
-            buff.close();
+            DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
+            dOut.writeUTF(messageTextArea.getText());
+//            buff.write(messageTextArea.getText());
+//            buff.flush();
+//            buff.close();
             socket.close();
         }
     }
