@@ -86,13 +86,9 @@ public class MainController implements Initializable {
                         }
                 );
                 disableConnectionInput("unlisten");
-                usernameTextField.setDisable(true);
             } else {
-                chatManager.close();
+                cleanConnection("listen");
                 serverSocket.close();
-                usernameTextField.setDisable(false);
-                disableServerInput(false);
-                listenButton.setText("listen");
             }
         } else {
             if (currentText.equals("connect")) {
@@ -106,12 +102,8 @@ public class MainController implements Initializable {
                     }
                 });
                 disableConnectionInput("disconnect");
-                usernameTextField.setDisable(true);
             } else {
-                chatManager.close();
-                usernameTextField.setDisable(false);
-                disableServerInput(true);
-                listenButton.setText("connect");
+                cleanConnection("connect");
             }
         }
     }
@@ -121,6 +113,14 @@ public class MainController implements Initializable {
         destIPTextField.setDisable(true);
         destPortTextField.setDisable(true);
         portTextField.setDisable(true);
+        usernameTextField.setDisable(true);
+    }
+
+    private void cleanConnection(String label) throws IOException {
+        chatManager.close();
+        usernameTextField.setDisable(false);
+        disableServerInput(true);
+        listenButton.setText(label);
     }
 
     @FXML
