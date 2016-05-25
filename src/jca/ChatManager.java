@@ -17,7 +17,7 @@ public class ChatManager {
     private DataInputStream dIn;
     private Socket clientSocket;
 
-    ChatManager(Consumer<String> chatConsumer,
+    public ChatManager(Consumer<String> chatConsumer,
                 Supplier<String> headerSupplier,
                 Supplier<String> messageSupplier) {
 
