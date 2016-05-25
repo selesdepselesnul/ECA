@@ -56,8 +56,11 @@ public class ChatManager {
     }
 
     public void close() throws IOException {
-        dIn.close();
-        dOut.close();
-        clientSocket.close();
+        if (dIn != null)
+            dIn.close();
+        if (dOut != null)
+            dOut.close();
+        if(clientSocket != null)
+            clientSocket.close();
     }
 }

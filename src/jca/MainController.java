@@ -57,6 +57,7 @@ public class MainController implements Initializable {
         destPortTextField.setDisable(!isDisble);
         destIPTextField.setDisable(!isDisble);
     }
+
     public void handleServerCheckBox() {
         if (serverCheckBox.isSelected()) {
             disableServerInput(false);
@@ -69,6 +70,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleClickListenButton() throws IOException {
+
         String currentText = listenButton.getText();
         if(serverCheckBox.isSelected()) {
             if (currentText.equals("listen")) {
@@ -83,13 +85,14 @@ public class MainController implements Initializable {
                             }
                         }
                 );
-                listenButton.setText("unlisten");
-                portTextField.setDisable(true);
+                disableConnectionInput("unlisten");
+                usernameTextField.setDisable(true);
             } else {
                 chatManager.close();
                 serverSocket.close();
+                usernameTextField.setDisable(false);
+                disableServerInput(false);
                 listenButton.setText("listen");
-                portTextField.setDisable(false);
             }
         } else {
             if (currentText.equals("connect")) {
@@ -102,12 +105,22 @@ public class MainController implements Initializable {
                         return null;
                     }
                 });
-                listenButton.setText("disconnect");
+                disableConnectionInput("disconnect");
+                usernameTextField.setDisable(true);
             } else {
-                this.chatManager.close();
+                chatManager.close();
+                usernameTextField.setDisable(false);
+                disableServerInput(true);
                 listenButton.setText("connect");
             }
         }
+    }
+
+    private void disableConnectionInput(String label) {
+        listenButton.setText(label);
+        destIPTextField.setDisable(true);
+        destPortTextField.setDisable(true);
+        portTextField.setDisable(true);
     }
 
     @FXML
