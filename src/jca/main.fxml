@@ -15,7 +15,7 @@
       <TextField fx:id="destIPTextField" disable="true" layoutX="188.0" layoutY="351.0" prefHeight="26.0" prefWidth="222.0" promptText="ip" />
       <CheckBox fx:id="serverCheckBox" layoutX="453.0" layoutY="355.0" mnemonicParsing="false" onAction="#handleServerCheckBox" selected="true" text="server" />
       <Button fx:id="listenButton" layoutX="542.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleClickListenButton" prefHeight="26.0" prefWidth="108.0" text="listen" />
-      <TextArea fx:id="chatTextArea" layoutX="14.0" layoutY="10.0" onKeyReleased="#handleEveryTyping" prefHeight="328.0" prefWidth="633.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="10.0" />
+      <TextArea fx:id="chatTextArea" layoutX="14.0" layoutY="10.0" prefHeight="328.0" prefWidth="633.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="10.0" />
       <Text fx:id="usernameText" layoutX="223.0" layoutY="361.0" strokeType="OUTSIDE" strokeWidth="0.0" />
    </children>
 </AnchorPane>

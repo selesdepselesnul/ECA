@@ -37,10 +37,19 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         this.chatManager = new ChatManager(
                 chatTextArea::getText,
                 chatTextArea::setText
         );
+
+        chatTextArea.setOnKeyReleased(__ -> {
+            try {
+                chatManager.send();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void handleServerCheckBox() {
@@ -61,6 +70,7 @@ public class MainController implements Initializable {
             if (currentText.equals("listen")) {
                 int port = Integer.parseInt(portTextField.getText());
                 serverSocket = new ServerSocket(port);
+
                 this.chatManager.connectAndReceive(
                         () -> {
                             try {
@@ -93,20 +103,10 @@ public class MainController implements Initializable {
         }
     }
 
-    private void disableConnectionInput(String label) {
-        listenButton.setText(label);
-        destIPTextField.setDisable(true);
-        portTextField.setDisable(true);
-    }
 
     private void cleanConnection(String label) throws IOException {
         chatManager.close();
         listenButton.setText(label);
-    }
-
-    @FXML
-    public void handleEveryTyping() throws IOException {
-        this.chatManager.send();
     }
 
 }
