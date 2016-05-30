@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -28,39 +29,26 @@ public class MainController implements Initializable {
     private TextField portTextField;
 
     @FXML
-    private TextField destPortTextField;
-
-    @FXML
     private TextField destIPTextField;
-
-    @FXML
-    private TextField usernameTextField;
 
     private ServerSocket serverSocket;
 
     private ChatManager chatManager;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.chatManager = new ChatManager(
-                x -> chatTextArea.setText(x),
-                () -> usernameTextField.getText(),
-                () -> chatTextArea.getText());
-    }
-
-    private void disableServerInput(boolean isDisble) {
-        portTextField.setDisable(isDisble);
-        destPortTextField.setDisable(!isDisble);
-        destIPTextField.setDisable(!isDisble);
+                chatTextArea::getText,
+                chatTextArea::setText
+        );
     }
 
     public void handleServerCheckBox() {
         if (serverCheckBox.isSelected()) {
-            disableServerInput(false);
+            destIPTextField.setDisable(true);
             listenButton.setText("listen");
         } else {
-            disableServerInput(true);
+            destIPTextField.setDisable(false);
             listenButton.setText("connect");
         }
     }
@@ -82,7 +70,7 @@ public class MainController implements Initializable {
                             }
                         }
                 );
-                disableConnectionInput("unlisten");
+                listenButton.setText("unlisten");
             } else {
                 cleanConnection("listen");
                 serverSocket.close();
@@ -90,7 +78,7 @@ public class MainController implements Initializable {
         } else {
             if (currentText.equals("connect")) {
                 String ip = destIPTextField.getText();
-                int port = Integer.parseInt(destPortTextField.getText());
+                int port = Integer.parseInt(portTextField.getText());
                 chatManager.connectAndReceive(() -> {
                     try {
                         return new Socket(ip, port);
@@ -98,7 +86,7 @@ public class MainController implements Initializable {
                         return null;
                     }
                 });
-                disableConnectionInput("disconnect");
+                listenButton.setText("disconnect");
             } else {
                 cleanConnection("connect");
             }
@@ -108,15 +96,11 @@ public class MainController implements Initializable {
     private void disableConnectionInput(String label) {
         listenButton.setText(label);
         destIPTextField.setDisable(true);
-        destPortTextField.setDisable(true);
         portTextField.setDisable(true);
-        usernameTextField.setDisable(true);
     }
 
     private void cleanConnection(String label) throws IOException {
         chatManager.close();
-        usernameTextField.setDisable(false);
-        disableServerInput(true);
         listenButton.setText(label);
     }
 

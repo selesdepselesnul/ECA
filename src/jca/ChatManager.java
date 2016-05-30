@@ -10,20 +10,20 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ChatManager {
-    private final Consumer<String> acceptData;
-    private final Supplier<String> headerSupplier;
-    private final Supplier<String> messageSupplier;
+
+    private final Consumer<String> chatConsumer;
+    private final Supplier<String> chatSupplier;
     private DataOutputStream dOut;
     private DataInputStream dIn;
     private Socket clientSocket;
+    private boolean firstMessage = true;
 
-    public ChatManager(Consumer<String> chatConsumer,
-                Supplier<String> headerSupplier,
-                Supplier<String> messageSupplier) {
+    public ChatManager(
+                Supplier<String> chatSupplier,
+                Consumer<String> chatConsumer) {
 
-        this.acceptData = chatConsumer;
-        this.headerSupplier = headerSupplier;
-        this.messageSupplier = messageSupplier;
+        this.chatConsumer = chatConsumer;
+        this.chatSupplier = chatSupplier;
     }
 
     public void connectAndReceive(Supplier<Socket> socketSupplier) {
@@ -40,7 +40,8 @@ public class ChatManager {
                 String data;
 
                 while ((data = dIn.readUTF()) != null)
-                    acceptData.accept(data);
+                    chatConsumer.accept(data);
+
 
                 return null;
 
@@ -51,7 +52,7 @@ public class ChatManager {
 
     public void send() throws IOException {
         dOut.writeUTF(
-                this.messageSupplier.get());
+                this.chatSupplier.get());
         dOut.flush();
     }
 

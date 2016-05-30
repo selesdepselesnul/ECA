@@ -12,8 +12,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
         AnchorPane root = fxmlLoader.load(ClassLoader.getSystemResourceAsStream("jca/main.fxml"));
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("JANCOK CHAT");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setWidth(658);
+        primaryStage.setHeight(388);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
