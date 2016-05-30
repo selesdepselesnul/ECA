@@ -34,9 +34,6 @@ public class MainController implements Initializable {
     private TextField destIPTextField;
 
     @FXML
-    private TextArea messageTextArea;
-
-    @FXML
     private TextField usernameTextField;
 
     private ServerSocket serverSocket;
@@ -125,10 +122,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void handleEveryTyping() throws IOException {
-        this.chatTextArea.appendText(
-                this.messageTextArea.getText());
         this.chatManager.send();
-        this.messageTextArea.clear();
     }
 
 }
