@@ -51,7 +51,7 @@ public class ChatManager {
 
     public void send() throws IOException {
         dOut.writeUTF(
-                this.headerSupplier.get()+":\n"+this.messageSupplier.get()+"\n");
+                this.messageSupplier.get());
         dOut.flush();
     }
 

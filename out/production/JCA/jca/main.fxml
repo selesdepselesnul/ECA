@@ -10,9 +10,9 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="565.0" xmlns="http://javafx.com/javafx/8.0.51" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jca.MainController">
    <children>
-      <TextArea fx:id="chatTextArea" layoutX="35.0" layoutY="14.0" prefHeight="200.0" prefWidth="490.0" />
-      <TextArea fx:id="messageTextArea" layoutX="35.0" layoutY="252.0" prefHeight="103.0" prefWidth="346.0" />
-      <Button layoutX="437.0" layoutY="329.0" mnemonicParsing="false" onAction="#handleSendButton" prefHeight="26.0" prefWidth="88.0" text="SEND" />
+      <TextArea fx:id="chatTextArea" layoutX="35.0" layoutY="14.0" onKeyReleased="#handleEveryTyping" prefHeight="200.0" prefWidth="490.0" />
+      <TextArea fx:id="messageTextArea" layoutX="35.0" layoutY="252.0" onKeyReleased="#handleEveryTyping" prefHeight="103.0" prefWidth="346.0" />
+      <Button layoutX="437.0" layoutY="329.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="88.0" text="SEND" />
       <TextField fx:id="portTextField" layoutX="35.0" layoutY="385.0" prefHeight="26.0" prefWidth="73.0" promptText="Port" />
       <TextField fx:id="destPortTextField" disable="true" layoutX="237.0" layoutY="385.0" prefHeight="26.0" prefWidth="73.0" promptText="D PORT" />
       <TextField fx:id="destIPTextField" disable="true" layoutX="108.0" layoutY="385.0" prefHeight="26.0" prefWidth="129.0" promptText="D IP" />

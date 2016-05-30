@@ -47,9 +47,9 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.chatManager = new ChatManager(
-                x -> chatTextArea.appendText(x),
+                x -> chatTextArea.setText(x),
                 () -> usernameTextField.getText(),
-                () -> messageTextArea.getText());
+                () -> chatTextArea.getText());
     }
 
     private void disableServerInput(boolean isDisble) {
@@ -124,9 +124,9 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void handleSendButton() throws IOException {
+    public void handleEveryTyping() throws IOException {
         this.chatTextArea.appendText(
-                "Me:\n"+this.messageTextArea.getText()+'\n');
+                this.messageTextArea.getText());
         this.chatManager.send();
         this.messageTextArea.clear();
     }
