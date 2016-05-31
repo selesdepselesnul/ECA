@@ -116,13 +116,14 @@ public class MainController implements Initializable {
 
         String welcomeMessage = "Welcome to SWAG CHAT App\n"+
                 "in order to use this app\n"+
-                "you yes you bitch ! and your friend over there\n"+
+                "you, yes you who watch me right now ! and your friend over there\n"+
                 "need to connect to each other\n"+
                 "delete this message and type\n"+
                 "port=port\nmode=server\nin the server side and for client side\n"+
-                "ip=ip\nport=port\nmode=server\nalso make sure open the server first\n"+
+                "ip=ip\nport=port\nmode=client\nalso make sure open the server first\n"+
                 "before client try to connect, what do u waiting for\n"+
-                "start chatting mother fucker!!!";
+                "start chatting ! oh i forget one thing, press F1 to connect\n"+
+                "so delete my message btw and start config your connection after i stop talking :)\n";
         animateText(welcomeMessage);
     }
 
