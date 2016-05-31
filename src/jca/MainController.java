@@ -108,7 +108,8 @@ public class MainController implements Initializable {
                             connection.isConnect = false;
                         } else {
                             System.out.println("close server");
-                            serverSocket.close();
+                            if(!serverSocket.isClosed())
+                                serverSocket.close();
                             chatManager.close();
                             animateText("server connection close!");
                             connection.isConnect = false;
@@ -123,16 +124,17 @@ public class MainController implements Initializable {
 
         });
 
-        String welcomeMessage = "Welcome to SWAG CHAT App\n"+
-                "in order to use this app\n"+
-                "you, yes you who watch me right now ! and your friend over there\n"+
-                "need to connect to each other\n"+
-                "delete this message and type\n"+
-                "port=port\nmode=server\nin the server side and for client side\n"+
-                "ip=ip\nport=port\nmode=client\nalso make sure open the server first\n"+
-                "before client try to connect, what do u waiting for\n"+
-                "start chatting ! oh i forget one thing, press F1 to connect\n"+
-                "so delete my message btw and start config your connection after i stop talking :)\n";
+        String welcomeMessage =
+                "Welcome to SWAG CHAT App in order to use this app\n"+
+                "you and your friend over there need to connect to each other\n"+
+                "to be able to connect to each other you need type some config\n"+
+                "the format is shown below\n" + "\nfor server side:\nport={port}\nmode=server\n"+
+                "\nfor client side:\nip={ip}\nport={port}\nmode=client\n\n"+
+                        "with each {ip} and {port} placeholder is customized with your own config\n"+
+                "don't forget server came first and then client no the other way around!\n"+
+                "what else do you waiting for ? start chatting !\noh i forget one thing, press F1 to connecting and F2 to disconnecting!\n"+
+                "btw you can't delete this message right now,"
+                        +" wait until i finish speaking\n";
         animateText(welcomeMessage);
     }
 
@@ -165,8 +167,7 @@ public class MainController implements Initializable {
                 if (!connection.isConnect) {
                     serverSocket = new ServerSocket(connection.port);
                     animateText(
-                            "Server active, "+
-                            "please wait for client to connect and give client first echo to you!");
+                            "Server active !");
                     this.chatManager.connectAndReceive(
                             () -> {
                                 try {
