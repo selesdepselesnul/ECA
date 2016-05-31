@@ -1,4 +1,4 @@
-package jca;
+package eca;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +11,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
-        AnchorPane root = fxmlLoader.load(ClassLoader.getSystemResourceAsStream("jca/main.fxml"));
+        AnchorPane root = fxmlLoader.load(ClassLoader.getSystemResourceAsStream("eca/main.fxml"));
         primaryStage.setTitle("SWAG CHAT");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);

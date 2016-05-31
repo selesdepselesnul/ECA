@@ -1,4 +1,4 @@
-package jca;
+package eca;
 
 public class Connection {
     public boolean isConnect = false;
