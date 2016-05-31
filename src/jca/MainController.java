@@ -1,5 +1,6 @@
 package jca;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -27,6 +28,7 @@ public class MainController implements Initializable {
 
     private ChatManager chatManager;
     private Connection connection = new Connection();
+    private Thread systemTextThread;
 
     private String[] splitKeyValue(String str) {
         String[] splitedStr = str.split("=");
@@ -71,41 +73,38 @@ public class MainController implements Initializable {
 
         chatTextArea.setStyle("-fx-background-color: black;");
         chatTextArea.setOnKeyReleased(e -> {
-            if(e.getCode() == KeyCode.ESCAPE) {
+            if(e.getCode() == KeyCode.F1) {
+                if(!systemTextThread.isAlive()) {
+                    Map<String, String> connectionMap = parse(chatTextArea.getText());
+                    if(connectionMap != null) {
+                        if(connectionMap.containsKey("mode") && connectionMap.size() >=2) {
+                            if(connectionMap.get("mode").equalsIgnoreCase("server")
+                                    && connectionMap.containsKey("port")
+                                    && connectionMap.size() == 2) {
+                                connection.mode = connectionMap.get("mode");
+                                connection.port = Integer.parseInt(connectionMap.get("port"));
+                            } else if(connectionMap.get("mode").equalsIgnoreCase("client")
+                                    && connectionMap.containsKey("ip")
+                                    && connectionMap.containsKey("port")) {
+                                connection.mode = connectionMap.get("mode");
+                                connection.port = Integer.parseInt(connectionMap.get("port"));
+                                connection.ip = connectionMap.get("ip");
+                            } else {
+                                connection.mode = null;
+                                connection.port = 0;
+                                connection.ip = null;
+                            }
 
-                Map<String, String> connectionMap = parse(chatTextArea.getText());
-                if(connectionMap != null) {
-                    if(connectionMap.containsKey("mode") && connectionMap.size() >=2) {
-                        if(connectionMap.get("mode").equalsIgnoreCase("server")
-                                && connectionMap.containsKey("port")
-                                && connectionMap.size() == 2) {
-                            connection.mode = connectionMap.get("mode");
-                            connection.port = Integer.parseInt(connectionMap.get("port"));
-                        } else if(connectionMap.get("mode").equalsIgnoreCase("client")
-                                && connectionMap.containsKey("ip")
-                                && connectionMap.containsKey("port")) {
-                            connection.mode = connectionMap.get("mode");
-                            connection.port = Integer.parseInt(connectionMap.get("port"));
-                            connection.ip = connectionMap.get("ip");
-                        } else {
-                            connection.mode = null;
-                            connection.port = 0;
-                            connection.ip = null;
+
                         }
-
-
-                    } else {
-                        chatTextArea.setText("mode must be selected !");
+                    }
+                    System.out.println(connection);
+                    try {
+                        checkModeAndStatus();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
                     }
                 }
-                System.out.println(connection);
-                try {
-                    checkModeAndStatus();
-
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
             } else if(connection.isConnect) {
                 try {
                     chatManager.send();
@@ -114,42 +113,71 @@ public class MainController implements Initializable {
                 }
             }
         });
+
+        String welcomeMessage = "Welcome to SWAG CHAT App\n"+
+                "in order to use this app\n"+
+                "you yes you bitch ! and your friend over there\n"+
+                "need to connect to each other\n"+
+                "delete this message and type\n"+
+                "port=port\nmode=server\nin the server side and for client side\n"+
+                "ip=ip\nport=port\nmode=server\nalso make sure open the server first\n"+
+                "before client try to connect, what do u waiting for\n"+
+                "start chatting mother fucker!!!";
+        animateText(welcomeMessage);
+    }
+
+    private void animateText(String text) {
+        this.chatTextArea.clear();
+        Task<Void> task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                for (int i=0; i<text.length();i++) {
+                    try {
+                        Thread.sleep(100);
+                        chatTextArea.appendText(String.valueOf(text.charAt(i)));
+                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+        };
+        systemTextThread = new Thread(task);
+        systemTextThread.start();
+
     }
 
     public void checkModeAndStatus() throws IOException {
-        if(connection.mode.equalsIgnoreCase("server")) {
-            if (!connection.isConnect) {
-                serverSocket = new ServerSocket(connection.port);
-                chatTextArea.setText("server active");
-                this.chatManager.connectAndReceive(
-                        () -> {
-                            try {
-                                return serverSocket.accept();
-                            } catch (IOException e1) {
-                                return null;
+        if(connection.mode != null) {
+            if(connection.mode.equalsIgnoreCase("server")) {
+                if (!connection.isConnect) {
+                    serverSocket = new ServerSocket(connection.port);
+                    animateText("Server active, please wait for client to connect and give client first echo to you!");
+                    this.chatManager.connectAndReceive(
+                            () -> {
+                                try {
+                                    return serverSocket.accept();
+                                } catch (IOException e1) {
+                                    return null;
+                                }
                             }
+                    );
+                    connection.isConnect = true;
+                }
+            } else {
+                if (!connection.isConnect) {
+                    chatManager.connectAndReceive(() -> {
+                        try {
+                            return new Socket(connection.ip, connection.port);
+                        } catch (IOException e) {
+                            return null;
                         }
-                );
-                connection.isConnect = true;
-            } else {
-                connection.isConnect = false;
-                serverSocket.close();
-            }
-        } else {
-            if (!connection.isConnect) {
-                chatManager.connectAndReceive(() -> {
-                    try {
-                        return new Socket(connection.ip, connection.port);
-                    } catch (IOException e) {
-                        return null;
-                    }
-                });
-                chatTextArea.setText("client connect");
-                connection.isConnect = true;
-            } else {
-                connection.isConnect = false;
-                chatManager.close();
+                    });
+                    animateText("Client connect to server, type some word to your friend over there!");
+                    connection.isConnect = true;
+                }
             }
         }
+
     }
 }
