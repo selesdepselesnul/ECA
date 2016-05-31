@@ -1,5 +1,6 @@
 package jca;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -65,45 +66,61 @@ public class MainController implements Initializable {
 
         chatTextArea.setStyle("-fx-background-color: black;");
         chatTextArea.setOnKeyReleased(e -> {
-            if(e.getCode() == KeyCode.F1) {
-                if(!systemTextThread.isAlive()) {
-                    Map<String, String> connectionMap = parse(chatTextArea.getText());
-                    if(connectionMap != null) {
-                        if(connectionMap.containsKey("mode") && connectionMap.size() >=2) {
-                            if(connectionMap.get("mode").equalsIgnoreCase("server")
-                                    && connectionMap.containsKey("port")
-                                    && connectionMap.size() == 2) {
-                                connection.mode = connectionMap.get("mode");
-                                connection.port = Integer.parseInt(connectionMap.get("port"));
-                            } else if(connectionMap.get("mode").equalsIgnoreCase("client")
-                                    && connectionMap.containsKey("ip")
-                                    && connectionMap.containsKey("port")) {
-                                connection.mode = connectionMap.get("mode");
-                                connection.port = Integer.parseInt(connectionMap.get("port"));
-                                connection.ip = connectionMap.get("ip");
-                            } else {
-                                connection.mode = null;
-                                connection.port = 0;
-                                connection.ip = null;
+            try {
+                if(connection.isConnect)
+                    chatManager.send();
+
+                if(e.getCode() == KeyCode.F1) {
+                    if(!systemTextThread.isAlive()) {
+                        Map<String, String> connectionMap = parse(chatTextArea.getText());
+                        if(connectionMap != null) {
+                            if(connectionMap.containsKey("mode") && connectionMap.size() >=2) {
+                                if(connectionMap.get("mode").equalsIgnoreCase("server")
+                                        && connectionMap.containsKey("port")
+                                        && connectionMap.size() == 2) {
+                                    connection.mode = connectionMap.get("mode");
+                                    connection.port = Integer.parseInt(connectionMap.get("port"));
+                                } else if(connectionMap.get("mode").equalsIgnoreCase("client")
+                                        && connectionMap.containsKey("ip")
+                                        && connectionMap.containsKey("port")) {
+                                    connection.mode = connectionMap.get("mode");
+                                    connection.port = Integer.parseInt(connectionMap.get("port"));
+                                    connection.ip = connectionMap.get("ip");
+                                } else {
+                                    connection.mode = null;
+                                    connection.port = 0;
+                                    connection.ip = null;
+                                }
+
+
                             }
+                        }
+                        System.out.println(connection);
+                        checkModeAndStatus();
 
-
+                    }
+                }  else if(e.getCode() == KeyCode.F2) {
+                    if(!systemTextThread.isAlive() && connection.isConnect) {
+                        if(connection.mode.equals("client")) {
+                            System.out.println("close client");
+                            chatManager.close();
+                            animateText("client connection close!");
+                            connection.isConnect = false;
+                        } else {
+                            System.out.println("close server");
+                            serverSocket.close();
+                            chatManager.close();
+                            animateText("server connection close!");
+                            connection.isConnect = false;
                         }
                     }
-                    System.out.println(connection);
-                    try {
-                        checkModeAndStatus();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
                 }
-            } else if(connection.isConnect) {
-                try {
-                    chatManager.send();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+
+
+            } catch (IOException err) {
+                animateText(err.getMessage());
             }
+
         });
 
         String welcomeMessage = "Welcome to SWAG CHAT App\n"+
@@ -121,6 +138,7 @@ public class MainController implements Initializable {
 
     private void animateText(String text) {
         this.chatTextArea.clear();
+        this.chatTextArea.setEditable(false);
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -132,6 +150,7 @@ public class MainController implements Initializable {
                         e.printStackTrace();
                     }
                 }
+                chatTextArea.setEditable(true);
                 return null;
             }
         };

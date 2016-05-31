@@ -41,7 +41,6 @@ public class ChatManager {
                 while ((data = dIn.readUTF()) != null)
                     chatConsumer.accept(data);
 
-
                 return null;
 
             }
@@ -50,9 +49,14 @@ public class ChatManager {
     }
 
     public void send() throws IOException {
-        dOut.writeUTF(
-                this.chatSupplier.get());
-        dOut.flush();
+        if(dOut != null) {
+            if(!clientSocket.isClosed()) {
+                dOut.writeUTF(
+                        this.chatSupplier.get());
+                dOut.flush();
+            }
+        }
+
     }
 
     public void close() throws IOException {
@@ -60,7 +64,10 @@ public class ChatManager {
             dIn.close();
         if (dOut != null)
             dOut.close();
-        if(clientSocket != null)
-            clientSocket.close();
+        if(clientSocket != null) {
+            if(!clientSocket.isClosed())
+                clientSocket.close();
+        }
+
     }
 }
