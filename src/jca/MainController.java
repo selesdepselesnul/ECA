@@ -6,12 +6,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -19,21 +23,43 @@ public class MainController implements Initializable {
     @FXML
     private TextArea chatTextArea;
 
-    @FXML
-    private Button listenButton;
-
-    @FXML
-    private CheckBox serverCheckBox;
-
-    @FXML
-    private TextField portTextField;
-
-    @FXML
-    private TextField destIPTextField;
-
     private ServerSocket serverSocket;
 
     private ChatManager chatManager;
+    private Connection connection = new Connection();
+
+    private String[] splitKeyValue(String str) {
+        String[] splitedStr = str.split("=");
+        if(splitedStr.length == 2) {
+            String[] keyValueArr = {splitedStr[0], splitedStr[1]};
+            return keyValueArr;
+        }
+        return null;
+    }
+    private Map<String, String> parse(String connectionConfig) {
+        Map<String, String> connectionMap = new HashMap<>();
+        String[] connections = connectionConfig.split("\n");
+        if(connections.length == 3) {
+            String[] firstPair = splitKeyValue(connections[0]);
+            String[] secondPair = splitKeyValue(connections[1]);
+            String[] thirdPair = splitKeyValue(connections[2]);
+            if (firstPair != null)
+                connectionMap.put(firstPair[0], firstPair[1]);
+            if(secondPair != null)
+                connectionMap.put(secondPair[0], secondPair[1]);
+            if(thirdPair != null)
+                connectionMap.put(thirdPair[0], thirdPair[1]);
+        } else if(connections.length == 2) {
+            String[] firstPair = splitKeyValue(connections[0]);
+            String[] secondPair = splitKeyValue(connections[1]);
+            if (firstPair != null)
+                connectionMap.put(firstPair[0], firstPair[1]);
+            if(secondPair != null)
+                connectionMap.put(secondPair[0], secondPair[1]);
+        }
+        return connectionMap;
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,34 +69,58 @@ public class MainController implements Initializable {
                 chatTextArea::setText
         );
 
-        chatTextArea.setOnKeyReleased(__ -> {
-            try {
-                chatManager.send();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+        chatTextArea.setOnKeyReleased(e -> {
+            if(e.getCode() == KeyCode.ESCAPE) {
+
+                Map<String, String> connectionMap = parse(chatTextArea.getText());
+                if(connectionMap != null) {
+                    if(connectionMap.containsKey("mode") && connectionMap.size() >=2) {
+                        if(connectionMap.get("mode").equalsIgnoreCase("server")
+                                && connectionMap.containsKey("port")
+                                && connectionMap.size() == 2) {
+                            connection.mode = connectionMap.get("mode");
+                            connection.port = Integer.parseInt(connectionMap.get("port"));
+                        } else if(connectionMap.get("mode").equalsIgnoreCase("client")
+                                && connectionMap.containsKey("ip")
+                                && connectionMap.containsKey("port")) {
+                            connection.mode = connectionMap.get("mode");
+                            connection.port = Integer.parseInt(connectionMap.get("port"));
+                            connection.ip = connectionMap.get("ip");
+                        } else {
+                            connection.mode = null;
+                            connection.port = 0;
+                            connection.ip = null;
+                        }
+
+
+                    } else {
+                        chatTextArea.setText("mode must be selected !");
+                    }
+                }
+                System.out.println(connection);
+                try {
+                    checkModeAndStatus();
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            } else if(connection.isConnect) {
+                try {
+                    chatManager.send();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
 
-    public void handleServerCheckBox() {
-        if (serverCheckBox.isSelected()) {
-            destIPTextField.setDisable(true);
-            listenButton.setText("listen");
-        } else {
-            destIPTextField.setDisable(false);
-            listenButton.setText("connect");
-        }
-    }
-
-    @FXML
-    public void handleClickListenButton() throws IOException {
-
-        String currentText = listenButton.getText();
-        if(serverCheckBox.isSelected()) {
-            if (currentText.equals("listen")) {
-                int port = Integer.parseInt(portTextField.getText());
-                serverSocket = new ServerSocket(port);
-
+    public void checkModeAndStatus() throws IOException {
+        if(connection.mode.equalsIgnoreCase("server")) {
+            if (!connection.isConnect) {
+                serverSocket = new ServerSocket(connection.port);
+                chatTextArea.setText("server active");
                 this.chatManager.connectAndReceive(
                         () -> {
                             try {
@@ -80,33 +130,26 @@ public class MainController implements Initializable {
                             }
                         }
                 );
-                listenButton.setText("unlisten");
+                connection.isConnect = true;
             } else {
-                cleanConnection("listen");
+                connection.isConnect = false;
                 serverSocket.close();
             }
         } else {
-            if (currentText.equals("connect")) {
-                String ip = destIPTextField.getText();
-                int port = Integer.parseInt(portTextField.getText());
+            if (!connection.isConnect) {
                 chatManager.connectAndReceive(() -> {
                     try {
-                        return new Socket(ip, port);
+                        return new Socket(connection.ip, connection.port);
                     } catch (IOException e) {
                         return null;
                     }
                 });
-                listenButton.setText("disconnect");
+                chatTextArea.setText("client connect");
+                connection.isConnect = true;
             } else {
-                cleanConnection("connect");
+                connection.isConnect = false;
+                chatManager.close();
             }
         }
     }
-
-
-    private void cleanConnection(String label) throws IOException {
-        chatManager.close();
-        listenButton.setText(label);
-    }
-
 }

@@ -16,7 +16,6 @@ public class ChatManager {
     private DataOutputStream dOut;
     private DataInputStream dIn;
     private Socket clientSocket;
-    private boolean firstMessage = true;
 
     public ChatManager(
                 Supplier<String> chatSupplier,
