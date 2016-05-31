@@ -1,7 +1,7 @@
 .text-area {
     -fx-font-family: Consolas;
-    -fx-font-size: 15;
-    -fx-text-fill: #ffffff;
+    -fx-font-size: 30;
+    -fx-text-fill: #006b3c;
     -fx-display-caret:true;
 }
 
