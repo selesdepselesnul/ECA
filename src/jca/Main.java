@@ -13,7 +13,10 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         AnchorPane root = fxmlLoader.load(ClassLoader.getSystemResourceAsStream("jca/main.fxml"));
         primaryStage.setTitle("JANCOK CHAT");
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+        scene.getStylesheets().add(
+                this.getClass().getResource("style.css").toExternalForm());
         primaryStage.setWidth(658);
         primaryStage.setHeight(388);
         primaryStage.setResizable(false);

@@ -69,7 +69,7 @@ public class MainController implements Initializable {
                 chatTextArea::setText
         );
 
-
+        chatTextArea.setStyle("-fx-background-color: black;");
         chatTextArea.setOnKeyReleased(e -> {
             if(e.getCode() == KeyCode.ESCAPE) {
 
