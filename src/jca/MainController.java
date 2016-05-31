@@ -3,18 +3,13 @@ package jca;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.text.Text;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -25,17 +20,14 @@ public class MainController implements Initializable {
     private TextArea chatTextArea;
 
     private ServerSocket serverSocket;
-
     private ChatManager chatManager;
     private Connection connection = new Connection();
     private Thread systemTextThread;
 
     private String[] splitKeyValue(String str) {
-        String[] splitedStr = str.split("=");
-        if(splitedStr.length == 2) {
-            String[] keyValueArr = {splitedStr[0], splitedStr[1]};
-            return keyValueArr;
-        }
+        final String[] keyValArr = str.split("=");
+        if(keyValArr.length == 2)
+            return keyValArr;
         return null;
     }
     private Map<String, String> parse(String connectionConfig) {
@@ -129,15 +121,15 @@ public class MainController implements Initializable {
 
     private void animateText(String text) {
         this.chatTextArea.clear();
-        Task<Void> task = new Task() {
+        Task<Void> task = new Task<Void>() {
             @Override
-            protected Object call() throws Exception {
+            protected Void call() throws Exception {
                 for (int i=0; i<text.length();i++) {
                     try {
                         Thread.sleep(100);
                         chatTextArea.appendText(String.valueOf(text.charAt(i)));
                     } catch (InterruptedException e) {
-//                        e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
                 return null;
@@ -153,7 +145,9 @@ public class MainController implements Initializable {
             if(connection.mode.equalsIgnoreCase("server")) {
                 if (!connection.isConnect) {
                     serverSocket = new ServerSocket(connection.port);
-                    animateText("Server active, please wait for client to connect and give client first echo to you!");
+                    animateText(
+                            "Server active, "+
+                            "please wait for client to connect and give client first echo to you!");
                     this.chatManager.connectAndReceive(
                             () -> {
                                 try {
@@ -174,7 +168,9 @@ public class MainController implements Initializable {
                             return null;
                         }
                     });
-                    animateText("Client connect to server, type some word to your friend over there!");
+                    animateText(
+                            "Client connect to server, "
+                            +"type some word to your friend over there!");
                     connection.isConnect = true;
                 }
             }
