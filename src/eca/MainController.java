@@ -11,12 +11,9 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
@@ -141,7 +138,7 @@ public class MainController implements Initializable {
                     giveIntro();
                 } else if(e.getCode() == KeyCode.F5) {
                     Runtime runtime = Runtime.getRuntime();
-                    Process process = runtime.exec(chatTextArea.getText());
+                    Process process = runtime.exec(chatTextArea.getSelectedText());
                     try(BufferedReader buff = new BufferedReader(new InputStreamReader(
                             process.getInputStream()));) {
                         chatTextArea.appendText("\noutput:\n"+buff.lines().collect(Collectors.joining("\n")));
