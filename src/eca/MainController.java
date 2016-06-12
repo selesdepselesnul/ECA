@@ -67,13 +67,14 @@ public class MainController implements Initializable {
         );
 
         chatTextArea.setStyle("-fx-background-color: black;");
+        chatTextArea.appendText("F1 if you know what do u mean ?\nF2 to stop it \nF3 f*@king boring intro\n");
         chatTextArea.setOnKeyReleased(e -> {
             try {
                 if(connection.isConnect)
                     chatManager.send();
 
                 if(e.getCode() == KeyCode.F1) {
-                    if(!systemTextThread.isAlive()) {
+                    if(systemTextThread ==  null) {
                         Map<String, String> connectionMap = parse(chatTextArea.getText());
                         if(connectionMap != null) {
                             if(connectionMap.containsKey("mode") && connectionMap.size() >=2) {
@@ -99,7 +100,6 @@ public class MainController implements Initializable {
                         }
                         System.out.println(connection);
                         checkModeAndStatus();
-
                     }
                 }  else if(e.getCode() == KeyCode.F2) {
                     if(!systemTextThread.isAlive() && connection.isConnect) {
@@ -117,6 +117,15 @@ public class MainController implements Initializable {
                             connection.isConnect = false;
                         }
                     }
+                } else if(e.getCode() == KeyCode.F3) {
+                    try(BufferedReader buff = new BufferedReader(new InputStreamReader(
+                            ClassLoader.getSystemResourceAsStream("eca/message.txt")));) {
+                        animateText(buff.lines().collect(Collectors.joining("\n")));
+                    } catch (IOException ioE) {
+                        ioE.printStackTrace();
+                    } finally {
+                        systemTextThread = null;
+                    }
                 }
 
 
@@ -126,12 +135,6 @@ public class MainController implements Initializable {
 
         });
 
-        try(BufferedReader buff = new BufferedReader(new InputStreamReader(
-                ClassLoader.getSystemResourceAsStream("eca/message.txt")));) {
-            animateText(buff.lines().collect(Collectors.joining("\n")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
