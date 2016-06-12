@@ -10,9 +10,12 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
 
@@ -123,18 +126,13 @@ public class MainController implements Initializable {
 
         });
 
-        String welcomeMessage =
-                "Welcome to SWAG CHAT App in order to use this app\n"+
-                "you and your friend over there need to connect to each other\n"+
-                "to be able to connect to each other you need type some config\n"+
-                "the format is shown below\n" + "\nfor server side:\nport={port}\nmode=server\n"+
-                "\nfor client side:\nip={ip}\nport={port}\nmode=client\n\n"+
-                        "with each {ip} and {port} placeholder is customized with your own config\n"+
-                "don't forget server came first and then client no the other way around!\n"+
-                "what else do you waiting for ? start chatting !\noh i forget one thing, press F1 to connecting and F2 to disconnecting!\n"+
-                "btw you can't delete this message right now,"
-                        +" wait until i finish speaking\n";
-        animateText(welcomeMessage);
+        try(BufferedReader buff = new BufferedReader(new InputStreamReader(
+                ClassLoader.getSystemResourceAsStream("eca/message.txt")));) {
+            animateText(buff.lines().collect(Collectors.joining("\n")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void animateText(String text) {
