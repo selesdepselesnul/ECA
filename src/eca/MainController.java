@@ -58,6 +58,11 @@ public class MainController implements Initializable {
     }
 
 
+    private void giveIntro() {
+        chatTextArea.setText("F1 if you know what do u mean ?\nF2 to stop it \nF3 f*@king boring intro\nF4 back to this message");
+    }
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -67,7 +72,7 @@ public class MainController implements Initializable {
         );
 
         chatTextArea.setStyle("-fx-background-color: black;");
-        chatTextArea.appendText("F1 if you know what do u mean ?\nF2 to stop it \nF3 f*@king boring intro\n");
+        giveIntro();
         chatTextArea.setOnKeyReleased(e -> {
             try {
                 if(connection.isConnect)
@@ -98,6 +103,8 @@ public class MainController implements Initializable {
 
                             }
                         }
+
+
                         System.out.println(connection);
                         checkModeAndStatus();
                     }
@@ -126,6 +133,8 @@ public class MainController implements Initializable {
                     } finally {
                         systemTextThread = null;
                     }
+                } else if(e.getCode() == KeyCode.F4) {
+                    giveIntro();
                 }
 
 
@@ -134,7 +143,6 @@ public class MainController implements Initializable {
             }
 
         });
-
 
     }
 
@@ -194,6 +202,8 @@ public class MainController implements Initializable {
                     connection.isConnect = true;
                 }
             }
+        } else {
+            chatTextArea.setText("R u f*@king kidding me ?");
         }
 
     }
