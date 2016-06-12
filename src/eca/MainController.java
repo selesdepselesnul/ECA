@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
@@ -62,7 +63,7 @@ public class MainController implements Initializable {
     private void giveIntro() {
         chatTextArea.setText(
                 "F1 if you know what do u mean ?\nF2 to stop it \n"
-                        +"F3 f*@king boring intro\nF4 back to this message\nF5 exit");
+                        +"F3 f*@king boring intro\nF4 back to this message\nF5 exec command\nF6 exit");
     }
 
 
@@ -139,6 +140,16 @@ public class MainController implements Initializable {
                 } else if(e.getCode() == KeyCode.F4) {
                     giveIntro();
                 } else if(e.getCode() == KeyCode.F5) {
+                    Runtime runtime = Runtime.getRuntime();
+                    Process process = runtime.exec(chatTextArea.getText());
+                    try(BufferedReader buff = new BufferedReader(new InputStreamReader(
+                            process.getInputStream()));) {
+                        chatTextArea.appendText("\noutput:\n"+buff.lines().collect(Collectors.joining("\n")));
+                    } catch (IOException ioE) {
+                        ioE.printStackTrace();
+                    }
+
+                } else if(e.getCode() == KeyCode.F6) {
                     Platform.exit();
                 }
 
@@ -149,6 +160,7 @@ public class MainController implements Initializable {
         });
 
     }
+
 
     private void animateText(String text) {
         this.chatTextArea.clear();
