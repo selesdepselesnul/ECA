@@ -1,5 +1,6 @@
 package eca;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,7 +60,9 @@ public class MainController implements Initializable {
 
 
     private void giveIntro() {
-        chatTextArea.setText("F1 if you know what do u mean ?\nF2 to stop it \nF3 f*@king boring intro\nF4 back to this message");
+        chatTextArea.setText(
+                "F1 if you know what do u mean ?\nF2 to stop it \n"
+                        +"F3 f*@king boring intro\nF4 back to this message\nF5 exit");
     }
 
 
@@ -135,13 +138,14 @@ public class MainController implements Initializable {
                     }
                 } else if(e.getCode() == KeyCode.F4) {
                     giveIntro();
+                } else if(e.getCode() == KeyCode.F5) {
+                    Platform.exit();
                 }
 
 
             } catch (IOException err) {
                 animateText(err.getMessage());
             }
-
         });
 
     }
