@@ -60,7 +60,7 @@ public class MainController implements Initializable {
 
     private void giveIntro() {
         chatTextArea.setText(
-                "F1 if you know what do u mean ?\nF2 to stop it \n"
+                "F1 connect it (if you know what do i mean ?)\nF2 to stop it \n"
                         +"F3 f*@king boring intro\nF4 back to this message\nF5 exec command\n"
                         +"F6 make font smaller\nF7 make font bigger\nF8 exit");
     }
@@ -220,7 +220,7 @@ public class MainController implements Initializable {
                 }
             }
         } else {
-            chatTextArea.setText("R u f*@king kidding me ?");
+           animateText("what the f*#k r u doin here ?\nread the intro if u don't know nothing\nscumbag!");
         }
 
     }
