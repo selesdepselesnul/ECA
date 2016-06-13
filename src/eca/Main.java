@@ -12,14 +12,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
         AnchorPane root = fxmlLoader.load(ClassLoader.getSystemResourceAsStream("eca/main.fxml"));
-        primaryStage.setTitle("SWAG CHAT");
+        primaryStage.setTitle("ECA");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         scene.getStylesheets().add(
                 this.getClass().getResource("style.css").toExternalForm());
-        primaryStage.setWidth(658);
-        primaryStage.setHeight(388);
-        primaryStage.setResizable(false);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 

@@ -16,7 +16,9 @@ port={your friend port}
 mode=client
 
 simple as that, but the first rule is server  first and then client
-because  it just doesn't work if your change the sequence
+because  it just doesn't work if you change the order
+r u bored now ? i told u before ! u didn't listen to me !
 so lets begin....
+ok one more.....
 i  will not delete myself just in case u want to read it before start
 so if u ready delete my message, have fun !
