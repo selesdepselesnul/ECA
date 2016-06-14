@@ -1,5 +1,5 @@
 Hello there i'm ECA, ECA is Chat App
-i made by Moch Deden & Baruna
+i made by Moch Deden (41155050140062) & Baruna (41155050140082)
 i'm very simple chat APP
 inspired by "Tin can telephone"
 do u remember those day when we use that kind of thing ?
@@ -20,5 +20,5 @@ because  it just doesn't work if you change the order
 r u bored now ? i told u before ! u didn't listen to me !
 so lets begin....
 ok one more.....
-i  will not delete myself just in case u want to read it before start
-so if u ready delete my message, have fun !
+i  will not delete myself just in case u want to read it before starting
+so if u ready delete my message, type your config and have fun !
