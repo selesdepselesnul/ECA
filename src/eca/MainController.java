@@ -215,7 +215,7 @@ public class MainController implements Initializable {
                         }
                     });
                     animateText(
-                            "Client connect to the server");
+                            "Client connect to the server !");
                     connection.isConnect = true;
                 }
             }
