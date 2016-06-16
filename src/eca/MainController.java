@@ -220,7 +220,7 @@ public class MainController implements Initializable {
                 }
             }
         } else {
-           animateText("what the hell r u doin here ?\nread the intro if u don't know nothing !");
+           animateText("what r u doin here ?\nread the intro if u don't know nothing !");
         }
 
     }
