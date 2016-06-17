@@ -113,12 +113,10 @@ public class MainController implements Initializable {
                     }  else if(e.getCode() == KeyCode.F2) {
                         if(!systemTextThread.isAlive() && connection.isConnect) {
                             if(connection.mode.equals("client")) {
-                                System.out.println("close client");
                                 chatManager.close();
                                 animateText("Client connection closed!");
                                 connection.isConnect = false;
                             } else {
-                                System.out.println("close server");
                                 if(!serverSocket.isClosed())
                                     serverSocket.close();
                                 chatManager.close();
