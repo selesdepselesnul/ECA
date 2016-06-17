@@ -122,7 +122,7 @@ public class MainController implements Initializable {
                                 if(!serverSocket.isClosed())
                                     serverSocket.close();
                                 chatManager.close();
-                                animateText("Server connection close!d");
+                                animateText("Server connection closed!");
                                 connection.isConnect = false;
                             }
                         }
