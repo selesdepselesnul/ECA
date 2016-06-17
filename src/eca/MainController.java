@@ -115,14 +115,14 @@ public class MainController implements Initializable {
                             if(connection.mode.equals("client")) {
                                 System.out.println("close client");
                                 chatManager.close();
-                                animateText("client connection close!");
+                                animateText("Client connection closed!");
                                 connection.isConnect = false;
                             } else {
                                 System.out.println("close server");
                                 if(!serverSocket.isClosed())
                                     serverSocket.close();
                                 chatManager.close();
-                                animateText("server connection close!");
+                                animateText("Server connection close!d");
                                 connection.isConnect = false;
                             }
                         }
